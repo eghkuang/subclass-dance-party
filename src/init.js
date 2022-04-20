@@ -2,36 +2,88 @@ $(document).ready(function() {
   window.dancers = [];
 
   $('.addDancerButton').on('click', function(event) {
-    /* This function sets up the click handlers for the create-dancer
-     * buttons on dancefloor.html. You should only need to make one small change to it.
-     * As long as the "data-dancer-maker-function-name" attribute of a
-     * class="addDancerButton" DOM node matches one of the names of the
-     * maker functions available in the global scope, clicking that node
-     * will call the function to make the dancer.
-     */
 
-    /* dancerMakerFunctionName is a string which must match
-     * one of the dancer maker functions available in global scope.
-     * A new object of the given type will be created and added
-     * to the stage.
-     */
     var dancerMakerFunctionName = $(this).data('dancer-maker-function-name');
 
-    // get the maker function for the kind of dancer we're supposed to make
     var dancerMakerFunction = window[dancerMakerFunctionName];
-    // make a dancer with a random position
 
-    var dancer = new dancerMakerFunction($("body").height() * Math.random(), $("body").width() * Math.random(), Math.random() * 1000);
-
-    //var a = new Object();
-    /*
-    var dancer = dancerMakerFunction(
+    var dancer = new dancerMakerFunction(
       $("body").height() * Math.random(),
       $("body").width() * Math.random(),
       Math.random() * 1000
     );
-    */
+    window.dancers.push(dancer);
+
     $('body').append(dancer.$node);
   });
+
+  $('.lineUpButton').on('click', function(event) {
+    var spacedWidth = Math.floor($("body").width() / window.dancers.length - 1);
+    var pos = 0;
+    for (let i = 0; i < window.dancers.length; i++) {
+      window.dancers[i].setPosition($("body").height() / 2, pos);
+      pos += spacedWidth;
+      window.dancers[i].isPaired = false;
+    }
+  });
+
+  //randomizesPosition
+  $('.randomizeButton').on('click', function(event) {
+    for (let i = 0; i < window.dancers.length; i++) {
+      window.dancers[i].setPosition($("body").height() * Math.random(), $("body").width() * Math.random());
+      window.dancers[i].isPaired = false;
+    }
+  });
+
+  $('.partnerUpButton').on('click', function(event) {
+
+    var distance = function(x1, x2, y1, y2) {
+      return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+    };
+
+    var availPartners = window.dancers.slice();
+
+    for (let i = 0; i < window.dancers.length; i++) {
+
+      if (availPartners.length > 0 && !window.dancers[i].isPaired) {
+
+        availPartners.splice(0, 1);
+
+        var distanceTracker = distance(window.dancers[i].top, window.dancers[i].left, availPartners[0].top, availPartners[0].top);
+
+        var minIndex = 0;
+
+        for (let j = 1; j < availPartners.length; j++) {
+          var currentDist = distance(window.dancers[i].top, window.dancers[i].left, availPartners[j].top, availPartners[j].top);
+
+          if (distanceTracker > currentDist) {
+            minIndex = j;
+            distanceTracker = currentDist;
+          }
+        }
+
+        availPartners[minIndex].setPosition(window.dancers[i].top + 20, window.dancers[i].left + 20);
+
+        window.dancers[i].isPaired = true;
+
+        availPartners[minIndex].isPaired = true;
+
+        availPartners.splice(minIndex, 1);
+
+      }
+    }
+  });
+  // look for flashy dancer
+  // change their color once u find them
+  $('.goCrazyButton').on('click', function(event) {
+    const setBg = () => {
+      const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+      document.flashyDancer.styles.backgroundColor = "#" + randomColor;
+      color.innerHTML = "#" + randomColor;
+    };
+    setBg();
+
+  });
+
 });
 

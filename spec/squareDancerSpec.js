@@ -12,7 +12,7 @@ describe('squareDancer', function() {
     expect(squareDancer.$node).to.be.an.instanceof(jQuery);
   });
 
-  it('should have a step function that makes its node blink', function() {
+  it('should have a step function that makes it rotate', function() {
     sinon.spy(squareDancer.$node, 'toggle');
     squareDancer.step();
     expect(squareDancer.$node.toggle.called).to.be.true;
