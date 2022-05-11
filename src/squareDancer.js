@@ -8,7 +8,7 @@ var makeSquareDancer = function(top, left, timeBetweenSteps) {
 
 };
 makeSquareDancer.prototype = Object.create(makeDancer.prototype);
-makeSquareDancer.prototype.constuctor = makeSquareDancer;
+makeSquareDancer.prototype.constructor = makeSquareDancer;
 
 makeSquareDancer.prototype.step = function() {
   makeDancer.prototype.step.call(this);
